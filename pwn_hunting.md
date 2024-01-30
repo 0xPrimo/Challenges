@@ -1,6 +1,6 @@
 - the program is allocating memory for the flag to store it and after corrupt it, so the only solution to this challenge is to scan process memory for 'HTB{' pattern.
-- we will face one problem which is if the memory page we want to read have READ permission or not. we'll use `access` SYSCALL to check that.
 ![pwn_hunting-copy and corrupt the flag](https://github.com/0xPrimo/CTFs/assets/93877982/58e8b19c-861b-46e1-9d1f-ea70d0f185bc)
+- we will face one problem which is if the memory page we want to read have READ permission or not. we'll use `access` SYSCALL to check that.
 
 - we'll use `egghunter` shellcode to find the pattern (egg) and print it using `write` SYSCALL.
 ```
