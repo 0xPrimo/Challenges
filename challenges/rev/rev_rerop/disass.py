@@ -80,7 +80,7 @@ for i in range(0, len(binary), 8):
 
 gadgets = set()
 
-opcodes_db = {
+gadgets_db = {
     0x451fe0: ('rdi = rax', False),
     0x452000: ('rsi = rax\n\trbx = 0\n\tif(rdi == 0)\n\t  rbx = rsi\n\trsp = rsp + rbx', False),
     0x458142: ('rdx = {:s}', True),
@@ -104,20 +104,19 @@ flag = ['A'] * 256
 
 for i, d in enumerate(dwords):
     if  exec_mem[0] <= d[0] <= exec_mem[1]:
-        disass = opcodes_db.get(d[0])
-        if disass[1]:
+        gadget = gadgets_db.get(d[0])
+        if gadget[1]:
             if dwords[i + 1][0] == 0x4c7820:
                 index = dwords[i + 3][0]
                 plus_key = dwords[i + 9][0]
                 xor_key  = 0x5
                 enc_char = dwords[i + 15][0]
-                # print("plus_key: {:X}, index: {:d}, xor_key: {:X}, enc_char: {:X}".format(plus_key, index, xor_key, enc_char))
                 flag[index] = chr(decrypt(enc_char, plus_key, xor_key))
 
 
-            print("0x{:X}\t".format(i * 8) + disass[0].format(hex(dwords[i + 1][0])))
+            print("0x{:X}\t".format(i * 8) + gadget[0].format(hex(dwords[i + 1][0])))
             i += 1
         else:
-            print("0x{:X}\t{:s}".format(i * 8, disass[0]))
+            print("0x{:X}\t{:s}".format(i * 8, gadget[0]))
 
 print(''.join(flag))
